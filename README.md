@@ -110,5 +110,3 @@ supply-optimizer-agent/
        --allow-unauthenticated \
        --set-env-vars-from-file .env
    ```
-
-```
