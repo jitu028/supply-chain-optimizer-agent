@@ -54,7 +54,7 @@ supply-optimizer-agent/
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/jitu028/supply-chain-optimizer-agent.git
    cd supply-optimizer-agent
    ```
 
