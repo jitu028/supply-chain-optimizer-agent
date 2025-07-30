@@ -90,23 +90,57 @@ supply-optimizer-agent/
 
 ### 3. Cloud Deployment (Google Cloud Run)
 
-1. **Build the Docker image:**
-   ```bash
-   docker build -t supply-optimizer-agent .
-   ```
+### 3.1 `api` - Agent Backend
 
-2. **Tag and push the image to Google Container Registry (GCR):**
-   ```bash
-   docker tag supply-optimizer-agent gcr.io/your-gcp-project-id/supply-optimizer-agent
-   docker push gcr.io/your-gcp-project-id/supply-optimizer-agent
-   ```
+```bash
+gcloud run deploy supply-chain-api \
+  --source ./api \
+  --region us-central1 \
+  --platform managed \
+  --allow-unauthenticated \
+  --project YOUR_PROJECT_ID
+```
 
-3. **Deploy to Cloud Run:**
-   ```bash
-   gcloud run deploy supply-optimizer-agent \
-       --image gcr.io/your-gcp-project-id/supply-optimizer-agent \
-       --platform managed \
-       --region your-gcp-region \
-       --allow-unauthenticated \
-       --set-env-vars-from-file .env
-   ```
+Test the endpoint:
+
+```bash
+curl -X POST https://supply-chain-api-<hash>-<region>.a.run.app/invoke \
+  -H "Content-Type: application/json" \
+  -d '{"query": "Simulate the impact if Shanghai suppliers are delayed by 5 days."}'
+```
+
+---
+
+### 3.2 `data-ingestion` - Neo4j Seeder (Cloud Run Job)
+
+```bash
+# Step 1: Build image
+gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/data-ingestion ./data-ingestion
+
+# Step 2: Create Cloud Run Job
+gcloud run jobs create data-ingestion-job \
+  --image=gcr.io/YOUR_PROJECT_ID/data-ingestion \
+  --region=us-central1 \
+  --project=YOUR_PROJECT_ID
+
+# Step 3: Run the Job
+gcloud run jobs execute data-ingestion-job \
+  --region=us-central1 \
+  --project=YOUR_PROJECT_ID
+```
+
+---
+
+### 3.3 `ui` - Streamlit Frontend
+
+Ensure `PORT=8080` is set in `.streamlit/config.toml` or via `os.environ`.
+
+```bash
+gcloud run deploy supply-chain-ui \
+  --source ./ui \
+  --region us-central1 \
+  --platform managed \
+  --allow-unauthenticated \
+  --project=YOUR_PROJECT_ID
+```
+
