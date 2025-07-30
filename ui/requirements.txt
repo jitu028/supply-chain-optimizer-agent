@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+python-dotenv
+neo4j
+google-cloud-aiplatform
+langgraph
+streamlit
+pydantic
+langchain_google_vertexai

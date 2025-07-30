@@ -1,0 +1,20 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/supply-optimizer-repo/supply-optimizer-data-ingestion:$BUILD_ID', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/supply-optimizer-repo/supply-optimizer-data-ingestion:$BUILD_ID']
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+  - 'run'
+  - 'jobs'
+  - 'deploy'
+  - 'supply-optimizer-data-ingestion'
+  - '--image'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/supply-optimizer-repo/supply-optimizer-data-ingestion:$BUILD_ID'
+  - '--region'
+  - 'us-central1'
+  - '--set-env-vars'
+  - 'NEO4J_URI=neo4j+s://661csa63.databases.neo4j.io,NEO4J_USERNAME=neo4j,NEO4J_PASSWORD=password' # replace with your Neo4j credentials
+images:
+- 'us-central1-docker.pkg.dev/$PROJECT_ID/supply-optimizer-repo/supply-optimizer-data-ingestion:$BUILD_ID'
