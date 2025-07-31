@@ -80,7 +80,7 @@ supply-optimizer-agent/
 
 6. **Run the agent locally:**
    ```bash
-   uvicorn app.main:app --reload
+   uvicorn api.main:app --reload
    ```
 
 7. **Run the UI (optional):**
